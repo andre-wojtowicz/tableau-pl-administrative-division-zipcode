@@ -1,8 +1,12 @@
-# Administrative division of Poland with zipcodes for Tableau 
+# Administrative division of Poland with zipcodes for Tableau
+
+This project extends Tableau geocoding for Poland by adding Poczta Polska zipcodes (kody pocztowe) along with voivodeships (województwa), counties (powiaty) and communes (gminy). It also provides a lookup table in order to transform Poczta Polska zipcodes to those recognized by Tableau.
 
 * [CODGiK](http://www.codgik.gov.pl/index.php/darmowe-dane/prg.html) state registry of borders: 2017-01-27
 * [Poczta Polska](http://kody.poczta-polska.pl/) zipcodes: 2017-05-01
 * [Tableau](https://www.tableau.com/) zipcodes: 10.2
+
+![Teaser](images/teaser.png "Administrative division of Poland with zipcodes")
 
 ## Requirements
 
@@ -75,3 +79,21 @@ Results can be investigated through workbooks in `tests` directory.
 `gen/pl-ad-all-with-zipcodes.csv` can be joined with client's data by `kod` and `Miejscowosc` (or a substring of it) in order to find associated administrative division. This can results in many matches, hence, it is better to perform this join outside Tableau and use only first matching per record.
 
 `gen/pl-ad-zipcodes-lookup.csv` can be joined in Tableau with client's data in order to map zipcodes to those recognized by Tableau.
+
+## Screenshots
+
+### Zipcodes (kody pocztowe)
+
+![Zipcodes (kody pocztowe)](images/pl-zipcodes.png "Zipcodes (kody pocztowe)")
+
+### Communes (gminy)
+
+![Communes (gminy)](images/pl-communes.png "Communes (gminy)")
+
+### Counties (powiaty)
+
+![Counties (powiaty)](images/pl-counties.png "Counties (powiaty)")
+
+### Voivodeships (województwa)
+
+![Voivodeships (województwa)](images/pl-voivodeships.png "Voivodeships (województwa)")
