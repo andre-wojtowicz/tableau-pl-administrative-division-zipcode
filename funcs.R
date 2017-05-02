@@ -252,6 +252,10 @@ combine.pp = function()
 
     df.pp[with(df.pp, Woj_nazwa == "świętokrzyskie" & Pow_nazwa == "jędrzejowski" & Gmi_nazwa == "Słupia"), "Gmi_nazwa"] = "Słupia (Jędrzejowska)"
     
+    cat(" * fix Poczta Polska zipcodes", fill = TRUE)
+    
+    df.pp = df[!(df.pp$Miejscowosc == "Hucisko" & df.pp$kod == "72-310"), ]
+    
     cat(" * test data equality between Poczta Polska and CODGiK", fill = TRUE)
 
     test.df.pp     = unique(df.pp[, c("Woj_nazwa", "Pow_nazwa", "Gmi_nazwa")])
