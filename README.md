@@ -76,9 +76,11 @@ Results can be investigated through workbooks in `tests` directory.
 
 `Local Data` directory should be put in `My Tableau Repository` directory. Then it overrides default Tableau geocoding and it can be embedded in .twbx and/or store in Tableau Server.
 
-`gen/pl-ad-all-with-zipcodes.csv` can be joined with client's data by `kod` and `Miejscowosc` (or a substring of it) in order to find associated administrative division. This can results in many matches, hence, it is better to perform this join outside Tableau and use only first matching per record.
+`gen/pl-ad-all-with-zipcodes.csv` can be joined with client's data by `kod` and `Miejscowosc` (or a substring* of it) in order to find associated administrative division. This can results in many matches, hence, it is better to perform this join outside Tableau and use only first matching per record.
 
 `gen/pl-ad-zipcodes-lookup.csv` can be joined in Tableau with client's data in order to map zipcodes to those recognized by Tableau.
+
+\* substring length - uniqueness: 7 - 89%; 10 - 95%, 14 - 99%.
 
 ## Screenshots
 
