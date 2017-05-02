@@ -1,0 +1,5 @@
+# path of Tableau repository
+tableau_repository_path: TABLEAU_REPOSITORY_PATH
+
+# GDAL installation path
+GDAL_installation_path: ./gdal

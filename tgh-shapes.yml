@@ -1,0 +1,66 @@
+shape_file_dir: ../shapes
+output_dir:     ./out
+
+geographic_roles:
+
+    -   role_name: Wojewodztwo (PL)
+    
+        shape_file_names:
+            -   wojewodztwa.shp
+        
+        required_geocoding_fields:
+        
+            Woj_kodGUS:
+                alias: Wojewodztwo (PL) - kod GUS
+                unique_id: true
+                
+            Woj_nazwa:
+                alias: Wojewodztwo (PL) - nazwa
+                
+        simplify_tolerance: 20
+
+    -   role_name: Powiat (PL)
+    
+        shape_file_names:
+            -   powiaty.shp
+        
+        required_geocoding_fields:
+        
+            Pow_kodGUS:
+                alias: Powiat (PL) - kod GUS
+                unique_id: true
+                
+        simplify_tolerance: 20
+        
+    -   role_name: Gmina (PL)
+    
+        shape_file_names:
+            -   gminy.shp
+        
+        required_geocoding_fields:
+        
+            Gmi_kodGUS:
+                alias: Gmina (PL) - kod GUS
+                unique_id: true
+                
+        simplify_tolerance: 20
+        
+role_hierarchy:
+    -   role: Country
+        children:
+            -   role: State
+                children:
+                    -   role: City
+                    -   role: County
+                    -   role: Congress
+            -   role: ZipCode
+            -   role: AreaCode
+            -   role: CMSA
+
+purge_synonyms: true
+
+purge_roles_exceptions:
+
+    Country:
+        - Poland
+
