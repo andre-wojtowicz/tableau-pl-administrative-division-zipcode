@@ -153,9 +153,19 @@ crawl.pp.zipcodes = function()
     
     ZIPCODES = sort(apply(expand.grid(0:9, 0:9, 0:9, 0:9, 0:9), 1, 
                  function(x) {paste0(x[1],x[2],x[3],x[4],x[5])}))
+                 
+    cat(" * running rvest (this may take a while)", fill = TRUE)
 
-    # todo: make parallel
-    df.download = foreach(zipcode = ZIPCODES, .combine = rbind, .packages = c("rvest")) %do%
+    if (Sys.info()[['sysname']] == "Linux")
+	{
+		cat(" * cluster logs and task status: /tmp/r-cluster.log", fill = TRUE)
+	}
+				 
+	cl = makeCluster(parallel::detectCores(), outfile = ifelse(Sys.info()[['sysname']] == "Linux", "/tmp/r-cluster.log", ""))
+    registerDoParallel(cl)
+    clusterCall(cl, function(x) .libPaths(x), .libPaths())
+
+    df.download = foreach(zipcode = ZIPCODES, .combine = rbind, .packages = c("rvest")) %dopar%
     {
         df.ret = data.frame()
         current.page = 0
@@ -167,6 +177,8 @@ crawl.pp.zipcodes = function()
             
             print(current.url)
                         
+            # TODO: fix timeout error (package 'curl' instead of current.url string, 
+            # curl("https://httpbin.org/get", handle = new_handle(TIMEOUT = 60))); timeout handling manual, no retry in 'curl'
             html.file = read_html(current.url, encoding = "utf8")
             
             if (grepl("Zapytanie nie zwróciło wyników", 
@@ -213,6 +225,8 @@ crawl.pp.zipcodes = function()
 
         return(df.ret)
     }
+    
+    stopCluster(cl)
 
     df.download = df.download[, c("województwo", "powiat", "gmina", "miejscowość", "kod PNA")]
     colnames(df.download) = c("Woj_nazwa", "Pow_nazwa", "Gmi_nazwa", "Miejscowosc", "kod")
@@ -284,13 +298,18 @@ combine.pp = function()
 
     cat(" * combine datasets (this may take a while)", fill = TRUE)
 
-    cl = makeCluster(parallel::detectCores())
+    if (Sys.info()[['sysname']] == "Linux")
+	{
+		cat(" * cluster logs and task status: /tmp/r-cluster.log", fill = TRUE)
+	}
+				 
+	cl = makeCluster(parallel::detectCores(), outfile = ifelse(Sys.info()[['sysname']] == "Linux", "/tmp/r-cluster.log", ""))
     registerDoParallel(cl)
     clusterCall(cl, function(x) .libPaths(x), .libPaths())
 
     df.combined = foreach(i = 1:nrow(df.pp), .combine = rbind, .packages = "plyr") %dopar%
     {
-        print(i)
+        print(paste(i, "/", nrow(df.pp)))
         row = df.pp[i, ]
         x = plyr::join(row, df.ad.gpw, by = c("Woj_nazwa", "Pow_nazwa", "Gmi_nazwa"))
 

@@ -69,7 +69,7 @@ function check-requirements {
 
     Rscript -e "TRUE" &> /dev/null
     if [ $? -ne 0 ] ; then
-        echo "Missing R"; PKG_R_FLAG=1
+        echo "Missing R (see: https://mran.microsoft.com/download/)"; PKG_R_FLAG=1
     fi
     
     if [ $PKG_R_FLAG -ne 0 ] ; then
@@ -81,7 +81,9 @@ function check-requirements {
         echo "Missing R checkpoint library"; exit 1
     fi
     
-    Rscript -e "library(checkpoint); checkpoint('$R_CHECKPOINT_SNAPSHOT_DATE', verbose = TRUE, scanForPackages = TRUE)"
+    mkdir -p ~/.checkpoint
+    
+    Rscript -e "try({assignInNamespace('checkpoint_log', function(...) {}, 'checkpoint')}, silent = TRUE); library(checkpoint); checkpoint('$R_CHECKPOINT_SNAPSHOT_DATE', verbose = TRUE, scanForPackages = TRUE)"
     if [ $? -ne 0 ] ; then
         echo "Installation of R libraries failed"; exit 1
     fi
