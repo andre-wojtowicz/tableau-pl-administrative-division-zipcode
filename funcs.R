@@ -165,7 +165,7 @@ crawl.pp.zipcodes = function()
     registerDoParallel(cl)
     clusterCall(cl, function(x) .libPaths(x), .libPaths())
 
-    df.download = foreach(zipcode = ZIPCODES, .combine = rbind, .packages = c("rvest")) %dopar%
+    df.download = foreach(zipcode = ZIPCODES, .combine = rbind, .packages = c("rvest", "curl")) %dopar%
     {
         df.ret = data.frame()
         current.page = 0
@@ -177,9 +177,36 @@ crawl.pp.zipcodes = function()
             
             print(current.url)
                         
-            # TODO: fix timeout error (package 'curl' instead of current.url string, 
-            # curl("https://httpbin.org/get", handle = new_handle(TIMEOUT = 60))); timeout handling manual, no retry in 'curl'
-            html.file = read_html(current.url, encoding = "utf8")
+            MAX.RETRY = 5
+
+            no.retry = MAX.RETRY
+            html.file = NULL
+
+            while (is.null(html.file) & no.retry > 0)
+            {
+                tryCatch(
+                    {
+                        con <- curl(current.url, 
+                                    handle = new_handle(TIMEOUT = 15))
+                        html.file <- read_html(con, encoding = "utf8")
+                    },
+                    error = function(e) { 
+                        warning(paste(e$message, "-", current.url, "- attempt:", 
+                                      MAX.RETRY + 1 - no.retry), immediate. = TRUE)
+                        close(con)
+                        }
+                )
+                
+                if (is.null(html.file))
+                {
+                    no.retry = no.retry - 1
+                }
+            }
+
+            if (is.null(html.file))
+            {
+                stop(paste("Unable to connect", current.url))
+            }
             
             if (grepl("Zapytanie nie zwróciło wyników", 
                       html_text(html.file), fixed = TRUE))
@@ -391,6 +418,7 @@ suppressPackageStartupMessages({
     library(readxl)
     library(foreach)
     library(rvest)
+    library(curl)
 })
 
 if (!dir.exists(DIR.GEN))
