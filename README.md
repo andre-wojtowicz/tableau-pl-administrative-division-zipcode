@@ -15,6 +15,7 @@ This project extends Tableau geocoding for Poland by adding Poczta Polska zipcod
     * `libproj-dev`
     * `libgeos-dev`
     * `libgdal-dev`
+    * `unzip`
  * R 3.3 with `checkpoint` library (e.g. [Microsoft R Open](https://mran.microsoft.com/download/))
  * Tableau 10.2
 
