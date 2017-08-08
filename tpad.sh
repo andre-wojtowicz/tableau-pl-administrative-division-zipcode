@@ -57,7 +57,7 @@ function check-requirements {
 
     echo "Checking requirements..."
 
-    PKG_ARR=(build-essential libproj-dev libgeos-dev libgdal-dev)
+    PKG_ARR=(build-essential libproj-dev libgeos-dev libgdal-dev unzip)
     PKG_R_FLAG=0
 
     for pkgname in ${PKG_ARR[@]}; do
